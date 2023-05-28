@@ -25,6 +25,6 @@ class TElevatedButtonTheme {
                         foregroundColor: tSecondaryColor,
                         backgroundColor: tWhiteColor,
                         side: const BorderSide(color: tSecondaryColor),
-                        padding: EdgeInsets.symmetric(vertical: tButtonHigth)),
+                        padding: const EdgeInsets.symmetric(vertical: tButtonHigth)),
   );
 }

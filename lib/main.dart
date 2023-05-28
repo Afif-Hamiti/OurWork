@@ -1,18 +1,13 @@
 import 'package:MyMedice/src/authentication/screens/on_boarding/on_boarding_screen.dart';
-import 'package:MyMedice/src/repository/authentication_repository/authentification_repository.dart';
 import 'package:MyMedice/src/utils/theme/them.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'firebase_options.dart';
 import 'src/core/screens/navigat.dart';
 
 bool isLogin = false;
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
-      .then((value) => Get.put(AuthenticationRepository()));
+  WidgetsFlutterBinding.ensureInitialized(); 
   var user = FirebaseAuth.instance.currentUser;
 
   if (user == null) {

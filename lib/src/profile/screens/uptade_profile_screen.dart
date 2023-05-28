@@ -210,8 +210,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                               Navigator.pop(context);
                               setState(() {});
                             } else {
+                              // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
+                                  .showSnackBar(const SnackBar(
                                 content: Text("No Image Selected !"),
                               ));
                             }

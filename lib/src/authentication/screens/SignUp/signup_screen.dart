@@ -18,7 +18,6 @@ class SingnUpScreen extends StatefulWidget {
 }
 
 class _SingnUpScreenState extends State<SingnUpScreen> {
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -61,7 +60,16 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
   final _formKey = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    super.initState();
+    controller.fullName.addListener(() => setState(() {}));
+    controller.email.addListener(() => setState(() {}));
+    controller.phoneNo.addListener(() => setState(() {}));
+  }
+
+  @override
   Widget build(BuildContext context) {
+    bool isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: tFormHeight - 10),
       child: Form(
@@ -70,6 +78,7 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
+                textInputAction: TextInputAction.next,
                 validator: (val) {
                   if (val!.length > 100) {
                     return "username can't to be larger than 100 letter";
@@ -83,11 +92,21 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
                 cursorColor: tSecondaryColor,
                 controller: controller.fullName,
                 keyboardType: TextInputType.name,
-                decoration: const InputDecoration(
-                  label: Text(tFullName),
+                decoration: InputDecoration(
+                  suffixIcon: controller.fullName.text.isEmpty
+                      ? Container(
+                          width: 0,
+                        )
+                      : IconButton(
+                          onPressed: () => controller.fullName.clear(),
+                          icon: Icon(
+                            Icons.close,
+                            color: isDark ? tAccentColor : tDarkColor,
+                          )),
+                  label: const Text(tFullName),
                   prefixIcon: Icon(
                     Icons.person_outline_outlined,
-                    color: tSecondaryColor,
+                    color: isDark ? tAccentColor : tDarkColor,
                   ),
                 ),
               ),
@@ -101,12 +120,24 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
                         : 'Enter a valid Email',
                 cursorColor: tSecondaryColor,
                 keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
                 controller: controller.email,
-                decoration: const InputDecoration(
-                  label: Text(tEmail),
+                decoration: InputDecoration(
+                  suffixIcon: controller.email.text.isEmpty
+                      ? Container(
+                          width: 0,
+                        )
+                      : IconButton(
+                          onPressed: () => controller.email.clear(),
+                          icon: Icon(
+                            Icons.close,
+                            color: isDark ? tAccentColor : tDarkColor,
+                          )),
+                  hintText: 'name@gmail.com',
+                  label: const Text(tEmail),
                   prefixIcon: Icon(
                     Icons.email_outlined,
-                    color: tSecondaryColor,
+                    color: isDark ? tAccentColor : tDarkColor,
                   ),
                 ),
               ),
@@ -114,6 +145,7 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
                 height: tFormHeight - 10,
               ),
               TextFormField(
+                textInputAction: TextInputAction.next,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (phone) => phone != null && phone.length < 10
                     ? "phone number can't to be more than 10 degits"
@@ -121,11 +153,21 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
                 cursorColor: tSecondaryColor,
                 keyboardType: TextInputType.phone,
                 controller: controller.phoneNo,
-                decoration: const InputDecoration(
-                  label: Text(tPhoneNo),
+                decoration: InputDecoration(
+                  suffixIcon: controller.phoneNo.text.isEmpty
+                      ? Container(
+                          width: 0,
+                        )
+                      : IconButton(
+                          onPressed: () => controller.phoneNo.clear(),
+                          icon: Icon(
+                            Icons.close,
+                            color: isDark ? tAccentColor : tDarkColor,
+                          )),
+                  label: const Text(tPhoneNo),
                   prefixIcon: Icon(
                     Icons.numbers,
-                    color: tSecondaryColor,
+                    color: isDark ? tAccentColor : tDarkColor,
                   ),
                 ),
               ),
@@ -133,6 +175,7 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
                 height: tFormHeight - 10,
               ),
               TextFormField(
+                textInputAction: TextInputAction.done,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (password) => password != null && password.length < 6
                     ? "password can't to be less than 6 letter "
@@ -150,11 +193,13 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
                       });
                     },
                     icon: Icon(
-                        _obscureText ? Icons.visibility_off : Icons.visibility),
+                      _obscureText ? Icons.visibility_off : Icons.visibility,
+                      color: isDark ? tAccentColor : tDarkColor,
+                    ),
                   ),
-                  prefixIcon: const Icon(
+                  prefixIcon: Icon(
                     Icons.lock_outline_rounded,
-                    color: tSecondaryColor,
+                    color: isDark ? tAccentColor : tDarkColor,
                   ),
                 ),
               ),
@@ -166,15 +211,7 @@ class _SignUpFormWidgetState extends State<SignUpFormWidget> {
                 child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        SignUpController.instance.registerUser(
-                            controller.email.text.trim().toLowerCase(),
-                            controller.password.text.trim().toLowerCase());
-                        /*final user = UserModel(
-                          email: controller.email.text.trim(),
-                          fullName: controller.fullName.text.trim(),
-                          phoneNo: controller.phoneNo.text.trim(),
-                        );
-                        SignUpController.instance.createUser(user);*/
+                      //*Signup with php
                       }
                     },
                     child: Text(tSignup.toUpperCase())),
@@ -225,7 +262,7 @@ class SignUpFooterWidget extends StatelessWidget {
                 // ignore: prefer_const_literals_to_create_immutables
                 children: [
                   const TextSpan(
-                      text: tLogin, style: TextStyle(color: Colors.blue))
+                      text: tLogin, style: TextStyle(color: tPrimaryColor))
                 ])))
       ],
     );

@@ -9,6 +9,8 @@ const String tOnBordingImage3 =
 // * Welcome Screen Images & Forms
 const String tWelcomeScreenImage =
     'assets/images/welcome_images/welcome_screen_image.json';
+    const String tWelcomeScreenIcon =
+    'assets/images/welcome_images/welcome_screen_image.png';
 
 // * Login & SignUp Images
 

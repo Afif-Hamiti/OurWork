@@ -49,9 +49,7 @@ class ForgetPasswordPhoneScreen extends StatelessWidget {
                           width: double.infinity,
                           child: ElevatedButton(
                               onPressed: () async {
-                                ForgetPasswordPhonController.instance
-                                    .phoneAuthentication(
-                                        controller.phoneNo.text.trim());
+                            //*   Forget Password with Phon (avec php)
                               },
                               child: const Text(tNext))),
                     ],

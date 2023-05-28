@@ -17,10 +17,15 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   String? medicelSelected;
-  
+
   bool isSelected = false;
   int q = 8;
   TextEditingController? _textEditingController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    _textEditingController?.addListener(() => setState(() {}));
+  }
 
 // *----------------------------------------------------
   // * function for filter our liste
@@ -30,10 +35,6 @@ class _SearchPageState extends State<SearchPage> {
     return SafeArea(
       child: Scaffold(
         drawer: const Drawer(),
-        appBar: AppBar(
-          title: const Text(tSearch),
-          centerTitle: true,
-        ),
         body: Padding(
           padding:
               const EdgeInsets.only(top: 50, bottom: 16, right: 16, left: 16),
@@ -69,7 +70,7 @@ class _SearchPageState extends State<SearchPage> {
                           color: Colors.blue,
                         ),
                         // ignore: unnecessary_const
-                        const Text(tNo_results_founds,
+                        const Text(tNoResultsFounds,
                             // ignore: unnecessary_const
                             style: const TextStyle(
                                 color: Colors.black,
@@ -88,20 +89,17 @@ class _SearchPageState extends State<SearchPage> {
                     )),
                 debounceDuration: const Duration(milliseconds: 400),
                 textFieldConfiguration: TextFieldConfiguration(
+                    textInputAction: TextInputAction.search,
                     controller: _textEditingController,
                     decoration: InputDecoration(
-                        suffixIcon: IconButton(
-                            onPressed: () {
-                              //itemsInSearch.clear();
-                              _textEditingController!.clear();
-                              setState(() {
-                                _textEditingController!.text = '';
-                              });
-                            },
-                            icon: Icon(
-                              Icons.close,
-                              color: Colors.red.withOpacity(0.4),
-                            )),
+                        suffixIcon: _textEditingController!.text.isEmpty
+                            ? Container(
+                                width: 0,
+                              )
+                            : IconButton(
+                                onPressed: () =>
+                                    _textEditingController!.clear(),
+                                icon: const Icon(Icons.close)),
                         fillColor: Colors.grey.withOpacity(0.1),
                         filled: true,
                         hintText: tSearch,

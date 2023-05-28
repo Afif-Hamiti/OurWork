@@ -40,8 +40,8 @@ class ForgetPasswordMailScreen extends StatelessWidget {
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (email) =>
                             email != null && EmailValidator.validate(email)
-                                ? 'Enter a valid Email'
-                                : null,
+                                ? null
+                                : 'Enter a valid Email',
                         cursorColor: tSecondaryColor,
                         keyboardType: TextInputType.emailAddress,
                         controller: controller.email,
@@ -61,9 +61,7 @@ class ForgetPasswordMailScreen extends StatelessWidget {
                                       builder: (context) => const Center(
                                             child: CircularProgressIndicator(),
                                           ));
-                                  ForgetPasswordEmailController.instance
-                                      .emailAuthentication(
-                                          controller.email.text.trim());
+                                //* passwordResetEmail avec php
                                 }
                               },
                               child: const Text(tNext))),

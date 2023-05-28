@@ -7,16 +7,14 @@ class TabsModel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Tab(
       height: 100,
-      child: Container(
-        padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
-            color: Colors.grey[200], borderRadius: BorderRadius.circular(12)),
-        child: Image.asset(
-          icon,
-          color: Colors.blue[600],
-        ),
+      child: Image.asset(
+        icon,
+        height: 28,
+        width: 28,
+        color: isDark ? Colors.white : Colors.black,
       ),
     );
   }

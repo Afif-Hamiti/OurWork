@@ -40,14 +40,14 @@ class OTPScreen extends StatelessWidget {
                 filled: true,
                 onSubmit: (code) {
                   otp = code;
-                  otpcontroller.verifyOTP(otp);
+                  //* verify OTP (avec php)
                 }),
             const SizedBox(height: 20.0),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                   onPressed: () {
-                    otpcontroller.verifyOTP(otp);
+                    //* verify OTP (avec php)
                   },
                   child: const Text(tNext)),
             ),

@@ -6,6 +6,7 @@ import 'package:MyMedice/src/home/screens/home_tabs/tab_injection.dart';
 import 'package:MyMedice/src/home/screens/home_tabs/tab_pomade.dart';
 import 'package:MyMedice/src/home/screens/home_tabs/tab_suyro.dart';
 import 'package:MyMedice/src/home/screens/home_tabs/tab_tablets.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -37,15 +38,10 @@ class _HomeState extends State<Home> {
   ];
   @override
   Widget build(BuildContext context) {
+    bool isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
     return DefaultTabController(
       length: myTabs.length,
       child: Scaffold(
-        drawer: const Drawer(),
-        appBar: AppBar(
-          title: const Text(tHome),
-          centerTitle: true,
-          actions: [],
-        ),
         body: SafeArea(
           child: Column(
             children: [
@@ -68,6 +64,8 @@ class _HomeState extends State<Home> {
               ),
               // tab bar
               TabBar(
+                indicatorWeight: 1,
+                indicatorColor: isDark ? Colors.white : Colors.black,
                 tabs: myTabs,
                 mouseCursor: MouseCursor.defer,
               ),

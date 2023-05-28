@@ -1,13 +1,15 @@
+import 'package:MyMedice/src/authentication/screens/Welcome/welcome_screen.dart';
 import 'package:MyMedice/src/constants/colors.dart';
 import 'package:MyMedice/src/constants/image_strings.dart';
 import 'package:MyMedice/src/constants/sizes.dart';
 import 'package:MyMedice/src/constants/text_strings.dart';
-import 'package:MyMedice/src/authentication/controllers/logout_controller.dart';
 import 'package:MyMedice/src/core/screens/Drawer/settings.dart';
 import 'package:MyMedice/src/profile/models/profile_menu.dart';
 import 'package:MyMedice/src/profile/screens/uptade_profile_screen.dart';
+import 'package:MyMedice/src/repository/authentication_repository/authentification_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
@@ -19,21 +21,13 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   String selectedImagePath = '';
-  final controller = Get.put(LogoutController());
+
   User? user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
     var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Scaffold(
       drawer: const Drawer(),
-      appBar: AppBar(
-        title: Text(tProfile, style: Theme.of(context).textTheme.headline4),
-        actions: [
-          IconButton(
-              onPressed: () {},
-              icon: Icon(isDark ? LineAwesomeIcons.moon : LineAwesomeIcons.sun))
-        ],
-      ),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(tDefaultSize),
@@ -123,23 +117,39 @@ class _ProfileState extends State<Profile> {
                   endIcon: false,
                   onPress: () {
                     Get.defaultDialog(
+                      backgroundColor: isDark
+                          ? Colors.white.withOpacity(0.2)
+                          : Colors.black.withOpacity(0.2),
                       title: "LOGOUT",
                       titleStyle: const TextStyle(fontSize: 20),
                       content: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 15.0),
+                        padding: EdgeInsets.symmetric(vertical: 9.0),
                         child: Text("Are you sure, you want to Logout?"),
                       ),
-                      confirm: Expanded(
-                        child: ElevatedButton(
-                          onPressed: () => LogoutController.instance.logout(),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.redAccent,
-                              side: BorderSide.none),
-                          child: const Text("Yes"),
-                        ),
+                      confirm: TextButton(
+                        onPressed: () {
+                          //* logout (avec php)
+                          Get.off(const WelcomeScreen());
+                          Fluttertoast.showToast(
+                              msg: 'Logout',
+                              timeInSecForIosWeb: 5,
+                              backgroundColor: Colors.black.withOpacity(0.1));
+                        },
+                        style: TextButton.styleFrom(
+                            foregroundColor: Colors.green,
+                            side: BorderSide.none),
+                        child: const Text("Yes"),
                       ),
-                      cancel: OutlinedButton(
-                          onPressed: () => Get.back(), child: const Text("No")),
+                      cancel: TextButton(
+                          style: TextButton.styleFrom(
+                              foregroundColor: Colors.red,
+                              side: BorderSide.none),
+                          onPressed: () {
+                            Get.back();
+                          },
+                          child: const Text(
+                            "No",
+                          )),
                     );
                   }),
             ],
@@ -149,14 +159,3 @@ class _ProfileState extends State<Profile> {
     );
   }
 }
-
-/*
-  
- 
-  
-     
-
-
-
-
- */

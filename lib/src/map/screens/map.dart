@@ -1,12 +1,13 @@
 import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:MyMedice/src/constants/sizes.dart';
 import 'package:MyMedice/src/constants/text_strings.dart';
 import 'package:MyMedice/src/map/controllers/expandable_fab.dart';
 import 'package:MyMedice/src/map/models/action_button.dart';
 import 'package:MyMedice/src/map/models/data.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:get/get.dart';
@@ -14,13 +15,10 @@ import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 
 class TMap extends StatefulWidget {
-  // ignore: use_key_in_widget_constructors
-  TMap({
-    Key? key,
-  });
+  const TMap({Key? key}) : super(key: key);
 
   @override
-  _TMapState createState() => _TMapState();
+  State<TMap> createState() => _TMapState();
 }
 
 List<Map<String, dynamic>> _data = [];
@@ -71,117 +69,80 @@ class _TMapState extends State<TMap> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _loadData();
+    _getLocation();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    return SafeArea(
-        child: Scaffold(
-      floatingActionButton: TFloatingActionButton(),
-      drawer: const Drawer(),
-      appBar: AppBar(
-        title: const Text('Location'),
-        centerTitle: true,
-        actions: [
-          _buildIconButton(
-            onPressed: () => _mapController.move(
-              _mapController.center,
-              _mapController.zoom + 1,
-            ),
-            icon: const Icon(Icons.zoom_in, color: Colors.white),
-            tooltip: 'Zoom In',
+    return Scaffold(
+      floatingActionButton: const TFloatingActionButton(),
+      body: FlutterMap(
+        mapController: _mapController,
+        options: MapOptions(
+          center: _locationData != null
+              ? LatLng(
+                  _locationData!.latitude!,
+                  _locationData!.longitude!,
+                )
+              : LatLng(28.41937647834312, 2.6138395797088356),
+          zoom: 10.0,
+        ),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            subdomains: const ['a', 'b', 'c'],
           ),
-          const Padding(padding: EdgeInsets.only(right: 16)),
-          _buildIconButton(
-            onPressed: () => _mapController.move(
-              _mapController.center,
-              _mapController.zoom - 1,
+          if (_locationData != null)
+            MarkerLayer(
+              markers: [
+                Marker(
+                  point: myLoction,
+                  builder: (_) => const Icon(
+                    Icons.location_on,
+                    color: Colors.red,
+                    size: 42.0,
+                  ),
+                ),
+              ],
             ),
-            icon: const Icon(Icons.zoom_out, color: Colors.white),
-            tooltip: 'Zoom Out',
+          MarkerLayer(
+            markers: _data
+                .map(
+                  (location) => Marker(
+                    point: LatLng(
+                      (location['lat'] is double) ? location['lat'] : 0.0,
+                      (location['lon'] is double) ? location['lon'] : 0.0,
+                    ),
+                    builder: (context) => IconButton(
+                      icon: const Icon(
+                        Icons.medication_rounded,
+                        color: Color.fromARGB(255, 168, 13, 2),
+                        size: 32.0,
+                      ),
+                      onPressed: () {
+                        Get.snackbar(
+                            location['name'], 'Address: ${location['address']}',
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.blue.withOpacity(0.1),
+                            colorText: Colors.black,
+                            duration: const Duration(milliseconds: 2200));
+                      },
+                    ),
+                  ),
+                )
+                .toList(),
           ),
         ],
       ),
-      body: SizedBox(
-        child: Column(
-          children: [
-            SizedBox(
-              height: height - 152,
-              child: Expanded(
-                child: FlutterMap(
-                  mapController: _mapController,
-                  options: MapOptions(
-                    center: _locationData != null
-                        ? LatLng(
-                            _locationData!.latitude!,
-                            _locationData!.longitude!,
-                          )
-                        : LatLng(28.41937647834312, 2.6138395797088356),
-                    zoom: 10.0,
-                  ),
-                  children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      subdomains: const ['a', 'b', 'c'],
-                    ),
-                    if (_locationData != null)
-                      MarkerLayer(
-                        markers: [
-                          Marker(
-                            point: myLoction,
-                            builder: (_) => const Icon(
-                              Icons.location_on,
-                              color: Colors.red,
-                              size: 42.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    MarkerLayer(
-                      markers: _data
-                          .map(
-                            (location) => Marker(
-                              point: LatLng(
-                                (location['lat'] is double)
-                                    ? location['lat']
-                                    : 0.0,
-                                (location['lon'] is double)
-                                    ? location['lon']
-                                    : 0.0,
-                              ),
-                              builder: (context) => IconButton(
-                                icon: const Icon(
-                                  Icons.medication_rounded,
-                                  color: Color.fromARGB(255, 168, 13, 2),
-                                  size: 32.0,
-                                ),
-                                onPressed: () {
-                                  Get.snackbar(location['name'],
-                                      'Address: ${location['address']}',
-                                      snackPosition: SnackPosition.BOTTOM,
-                                      backgroundColor:
-                                          Colors.blue.withOpacity(0.1),
-                                      colorText: Colors.black,
-                                      duration:
-                                          const Duration(milliseconds: 2200));
-                                },
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ));
+    );
   }
 }
 
 class TFloatingActionButton extends StatefulWidget {
-  TFloatingActionButton({
+  const TFloatingActionButton({
     super.key,
   });
 
@@ -190,7 +151,7 @@ class TFloatingActionButton extends StatefulWidget {
 }
 
 class _TFloatingActionButtonState extends State<TFloatingActionButton> {
-  TextEditingController? _textEditingController = TextEditingController();
+  final TextEditingController _textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -277,7 +238,7 @@ class _TFloatingActionButtonState extends State<TFloatingActionButton> {
                               color: Colors.blue,
                             ),
                             // ignore: unnecessary_const
-                            const Text(tNo_results_founds,
+                            const Text(tNoResultsFounds,
                                 // ignore: unnecessary_const
                                 style: const TextStyle(
                                     color: Colors.black,
@@ -301,9 +262,9 @@ class _TFloatingActionButtonState extends State<TFloatingActionButton> {
                             suffixIcon: IconButton(
                                 onPressed: () {
                                   //itemsInSearch.clear();
-                                  _textEditingController!.clear();
+                                  _textEditingController.clear();
                                   setState(() {
-                                    _textEditingController!.text = '';
+                                    _textEditingController.text = '';
                                   });
                                 },
                                 icon: Icon(
